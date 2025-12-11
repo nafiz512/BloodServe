@@ -1,2 +1,14 @@
 @import "tailwindcss";
 @plugin "daisyui";
+@plugin "daisyui/theme" {
+    name: "light";
+    default: true;
+    --color-primary: #0b6f50;
+    /* --color-secondary: teal; */
+    --color-background-light: #f6f8f7;
+    --color-background-dark: #11211c;
+    --color-border-light: #d0e7e0;
+    --color-border-dark: #2a4a3e;
+    --color-card-light: #ffffff;
+    --color-card-dark: #1a2e27;
+}
