@@ -7,6 +7,9 @@ import Requests from "../Pages/Requests/Requests";
 import About from "../Pages/About/About";
 import Contact from "../Pages/Contact/Contact";
 import Foundings from "../Pages/Foundings/Foundings";
+import Login from "../Pages/Auth/Login/Login";
+import Register from "../Pages/Auth/Register/Register";
+import DetailsRequests from "../Pages/DetailsRequests/DetailsRequests";
 
 const Routes = createBrowserRouter([
     {
@@ -19,12 +22,24 @@ const Routes = createBrowserRouter([
                 element: <Home></Home>,
             },
             {
+                path: "/login",
+                element: <Login></Login>,
+            },
+            {
+                path: "/register",
+                element: <Register></Register>,
+            },
+            {
                 path: "/find-doners",
                 element: <FindDoners></FindDoners>,
             },
             {
                 path: "/requests",
                 element: <Requests></Requests>,
+            },
+            {
+                path: "/requests/:id",
+                element: <DetailsRequests></DetailsRequests>,
             },
             {
                 path: "/foundings",
@@ -39,6 +54,9 @@ const Routes = createBrowserRouter([
                 element: <Contact></Contact>,
             },
         ],
+    },
+    {
+        path: "/dashboard",
     },
 ]);
 
