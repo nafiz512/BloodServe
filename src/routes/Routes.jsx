@@ -10,6 +10,13 @@ import Foundings from "../Pages/Foundings/Foundings";
 import Login from "../Pages/Auth/Login/Login";
 import Register from "../Pages/Auth/Register/Register";
 import DetailsRequests from "../Pages/DetailsRequests/DetailsRequests";
+import DashboardLayout from "../Layouts/DashboardLayout";
+import DashboardHome from "../Pages/Dashboard/DashboardHome/DashboardHome";
+import UserProfile from "../Pages/Dashboard/UserProfile/UserProfile";
+import CreateDonationRequest from "../Pages/Dashboard/CreateDonationRequest/CreateDonationRequest";
+import DonorManagement from "../Pages/Dashboard/DonorManagement/DonorManagement";
+import AllDonationRequests from "../Pages/Dashboard/AllDonationRequests/AllDonationRequests";
+import Funding from "../Pages/Dashboard/Funding/Funding";
 
 const Routes = createBrowserRouter([
     {
@@ -56,7 +63,34 @@ const Routes = createBrowserRouter([
         ],
     },
     {
-        path: "/dashboard",
+        path: "dashboard",
+        element: <DashboardLayout></DashboardLayout>,
+        children: [
+            {
+                index: true,
+                element: <DashboardHome></DashboardHome>,
+            },
+            {
+                path: "profile",
+                element: <UserProfile></UserProfile>,
+            },
+            {
+                path: "create-donation-request",
+                element: <CreateDonationRequest></CreateDonationRequest>,
+            },
+            {
+                path: "donor-management",
+                element: <DonorManagement></DonorManagement>,
+            },
+            {
+                path: "donation-requests",
+                element: <AllDonationRequests></AllDonationRequests>,
+            },
+            {
+                path: "funding",
+                element: <Funding></Funding>,
+            },
+        ],
     },
 ]);
 
