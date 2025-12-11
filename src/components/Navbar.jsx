@@ -1,6 +1,8 @@
 import React from "react";
 import { NavLink } from "react-router";
 
+import Logo from "./Logo";
+
 const Navbar = () => {
     const links = (
         <>
@@ -25,7 +27,7 @@ const Navbar = () => {
         </>
     );
     return (
-        <div className="navbar bg-base-100 shadow-sm">
+        <div className="px-[8%] navbar bg-base-100 shadow-sm">
             <div className="navbar-start">
                 <div className="dropdown">
                     <div
@@ -55,13 +57,17 @@ const Navbar = () => {
                         {links}
                     </ul>
                 </div>
-                <a className="btn btn-ghost text-xl">BloodServe</a>
+                <Logo></Logo>
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">{links}</ul>
             </div>
             <div className="navbar-end">
-                <a className="btn">Login</a>
+                <NavLink to={"/login"}>
+                    <button className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-6 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] transition-colors hover:bg-primary/90">
+                        <span className="truncate">Log In</span>
+                    </button>
+                </NavLink>
             </div>
         </div>
     );
