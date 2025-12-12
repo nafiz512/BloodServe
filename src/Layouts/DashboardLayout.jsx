@@ -8,17 +8,27 @@ import {
 } from "react-icons/fa";
 import { RiEBikeFill, RiRefundFill } from "react-icons/ri";
 import { SiGoogletasks } from "react-icons/si";
-import { Link, NavLink, Outlet } from "react-router";
+import { Link, NavLink, Outlet, useNavigate } from "react-router";
 import useRole from "../hooks/useRole";
 import { MdBloodtype, MdNoteAdd } from "react-icons/md";
 import { GrGroup } from "react-icons/gr";
-import { LuNotebookText } from "react-icons/lu";
+import { LuLogOut, LuNotebookText } from "react-icons/lu";
 import { PiPerson } from "react-icons/pi";
 import { IoPerson } from "react-icons/io5";
 import { BiSolidDonateBlood } from "react-icons/bi";
+import { use } from "react";
+import AuthContext from "../context/AuthContext";
 
 const DashboardLayout = () => {
     const { role } = useRole();
+    const { user, logOut } = use(AuthContext);
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logOut().then(() => {
+            navigate("/");
+        });
+    };
 
     return (
         <div className="drawer lg:drawer-open">
@@ -64,8 +74,33 @@ const DashboardLayout = () => {
                     <ul className="menu w-full grow">
                         {/* List item */}
                         <li>
-                            <Link to="/">
+                            <div
+                                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                                data-tip={user?.displayName}
+                            >
+                                <img
+                                    src={user?.photoURL}
+                                    alt="profile avater"
+                                    className="rounded-full h-10 is-drawer-close:w-7 is-drawer-close:h-7"
+                                />
+                                <div className="is-drawer-close:hidden">
+                                    <p className="text-lg">
+                                        {user?.displayName}
+                                    </p>
+                                    <p>{role}</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <Link
+                                to="/"
+                                data-tip="BloodServe"
+                                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                            >
                                 <MdBloodtype className="text-2xl text-red-600"></MdBloodtype>
+                                <h2 className="text-xl font-bold is-drawer-close:hidden">
+                                    BloodServe
+                                </h2>
                             </Link>
                         </li>
                         <li>
@@ -233,6 +268,20 @@ const DashboardLayout = () => {
                                     Settings
                                 </span>
                             </button>
+                        </li>
+                    </ul>
+                    <ul className="menu ">
+                        <li onClick={handleLogout}>
+                            <NavLink
+                                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                                data-tip="Logout"
+                                to="/dashboard/donation-requests"
+                            >
+                                <LuLogOut></LuLogOut>
+                                <span className="is-drawer-close:hidden">
+                                    Log-Out
+                                </span>
+                            </NavLink>
                         </li>
                     </ul>
                 </div>
