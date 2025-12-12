@@ -2,8 +2,13 @@ import React from "react";
 import { NavLink } from "react-router";
 
 import Logo from "./Logo";
+import { use } from "react";
+import AuthContext from "../context/AuthContext";
 
 const Navbar = () => {
+    const { user, logOut } = use(AuthContext);
+    console.log(user);
+
     const links = (
         <>
             <li>
@@ -27,7 +32,7 @@ const Navbar = () => {
         </>
     );
     return (
-        <div className="px-[8%] navbar bg-base-100 shadow-sm">
+        <div className="px-[8%]  navbar bg-base-100 shadow-sm">
             <div className="navbar-start">
                 <div className="dropdown">
                     <div
@@ -63,11 +68,34 @@ const Navbar = () => {
                 <ul className="menu menu-horizontal px-1">{links}</ul>
             </div>
             <div className="navbar-end">
-                <NavLink to={"/login"}>
-                    <button className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-6 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] transition-colors hover:bg-primary/90">
-                        <span className="truncate">Log In</span>
-                    </button>
-                </NavLink>
+                {user ? (
+                    <div className="dropdown dropdown-bottom dropdown-end">
+                        <div tabIndex={0} role="button" className=" m-1">
+                            <img
+                                src={user?.photoURL}
+                                alt="profile avater"
+                                className="h-10 w-10 rounded-full border-gray-300 border-2"
+                            />
+                        </div>
+                        <ul
+                            tabIndex="-1"
+                            className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+                        >
+                            <li>
+                                <NavLink to={"/dashboard"}>Dashboard</NavLink>
+                            </li>
+                            <li>
+                                <a onClick={() => logOut()}>Log-out</a>
+                            </li>
+                        </ul>
+                    </div>
+                ) : (
+                    <NavLink to={"/login"}>
+                        <button className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-6 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] transition-colors hover:bg-primary/90">
+                            <span className="truncate">Log In</span>
+                        </button>
+                    </NavLink>
+                )}
             </div>
         </div>
     );
