@@ -1,186 +1,306 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { NavLink } from "react-router";
+import AuthContext from "../../../context/AuthContext";
+import useAxios from "../../../hooks/useAxios";
+import axios from "axios";
 
 const Register = () => {
+    const {
+        register,
+        handleSubmit,
+        control,
+        setValue,
+        formState: { errors },
+    } = useForm();
+    const axiosSecure = useAxios();
+
+    const { registerUser, updateUserProfile } = useContext(AuthContext);
+    const [district, setDistrict] = useState([]);
+    const [upozila, setUpozila] = useState([]);
+
+    const districtName = useWatch({ control, name: "district" });
+
+    // Load district data
+    useEffect(() => {
+        axios.get("./district.json").then((data) => {
+            setDistrict(data.data);
+        });
+    }, []);
+
+    // Load upazila data
+    useEffect(() => {
+        axios.get("./upozila.json").then((data) => {
+            setUpozila(data.data);
+        });
+    }, []);
+
+    // Reset upazila when district changes
+    useEffect(() => {
+        setValue("upazila", ""); // reset to placeholder
+    }, [districtName, setValue]);
+
+    // Filter Upazila by District
+    const upozilaByDistrict = (districtName) => {
+        const dis = district.find((el) => el.name === districtName);
+
+        if (dis?.id) {
+            return upozila
+                .filter((el) => el.district_id === dis.id)
+                .map((el) => el.name);
+        }
+        return [];
+    };
+
+    const handleRegistration = (data) => {
+        data.status = "active";
+        data.role = "donor";
+        data.createdAt = new Date();
+        const profileImg = data.photo[0];
+        registerUser(data.email, data.password).then(() => {
+            // 1. store the image in form data
+            const formData = new FormData();
+            formData.append("image", profileImg);
+
+            // 2. send the photo to store and get the ul
+            const image_API_URL = `https://api.imgbb.com/1/upload?key=${
+                import.meta.env.VITE_image_host_key
+            }`;
+
+            axios.post(image_API_URL, formData).then((res) => {
+                const photoURL = res.data.data.url;
+                data.photoURL = photoURL;
+                // create user in the database
+                const userInfo = {
+                    ...data,
+                };
+                delete userInfo.password;
+                delete userInfo.confirmPassword;
+
+                userInfo.po;
+                axiosSecure.post("/users", userInfo).then((res) => {
+                    if (res.data.insertedId) {
+                        console.log("user created in the database");
+                    }
+                });
+
+                // update user profile to firebase
+                const userProfile = {
+                    displayName: data.name,
+                    photoURL: photoURL,
+                };
+
+                updateUserProfile(userProfile)
+                    .then(() => {
+                        // console.log('user profile updated done.')
+                        // navigate(location.state || '/');
+                    })
+                    .catch((error) => console.log(error));
+            });
+        });
+    };
+
     return (
         <div>
-            <main class="w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    {/* <!-- Left Column --> */}
-                    <div class="flex flex-col gap-4 text-center lg:text-left">
-                        <h1 class="text-[#0e1b17] dark:text-white text-4xl md:text-5xl font-black leading-tight tracking-[-0.033em]">
+            <main className="w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    {/* Left */}
+                    <div className="flex flex-col gap-4 text-center lg:text-left">
+                        <h1 className="text-[#0e1b17] dark:text-white text-4xl md:text-5xl font-black">
                             Become a Hero. Register to Donate.
                         </h1>
-                        <p class="text-[#4d9981] dark:text-gray-300 text-base md:text-lg font-normal leading-normal">
-                            Join our community of donors and volunteers. Your
-                            contribution can save lives. Signing up is quick and
-                            easy.
+                        <p className="text-[#4d9981] dark:text-gray-300">
+                            Join our community of donors. Your contribution can
+                            save lives.
                         </p>
-                        <div class="mt-4 hidden lg:block">
+
+                        <div className="mt-4 hidden lg:block">
                             <img
-                                class="rounded-xl object-center w-full h-80 shadow-md"
-                                data-alt="Abstract image of a modern, clean interior with medical context"
+                                className="rounded-xl w-full h-80 object-cover shadow-md"
                                 src="./register_logo.jpg"
+                                alt="Register illustration"
                             />
                         </div>
                     </div>
-                    {/* <!-- Right Column (Form Card) --> */}
-                    <div class="bg-white dark:bg-background-dark/50 rounded-xl shadow-lg p-6 sm:p-8">
-                        <h2 class="text-[#0e1b17] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] mb-6">
+
+                    {/* Right - Form */}
+                    <div className="bg-white dark:bg-background-dark/50 rounded-xl shadow-lg p-6 sm:p-8">
+                        <h2 className="text-[#0e1b17] dark:text-white text-[22px] font-bold mb-6">
                             Create Your Account
                         </h2>
-                        <form class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-5">
-                            {/* <!-- Name --> */}
-                            <div class="sm:col-span-2">
-                                <label class="flex flex-col">
-                                    <p class="text-[#0e1b17] dark:text-gray-200 text-sm font-medium leading-normal pb-2">
-                                        Name
+
+                        <form onSubmit={handleSubmit(handleRegistration)}>
+                            {/* Name */}
+                            <label className="flex flex-col mb-4">
+                                <p className="pb-2">Name</p>
+                                <input
+                                    {...register("name", { required: true })}
+                                    type="text"
+                                    placeholder="Type here"
+                                    className="input w-full"
+                                />
+                                {errors.name && (
+                                    <p className="text-red-500">
+                                        Name is required
                                     </p>
-                                    <input
-                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b17] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e7e0] dark:border-gray-600 bg-background-light dark:bg-gray-700/50 focus:border-primary h-12 placeholder:text-[#4d9981] p-3 text-base font-normal leading-normal"
-                                        placeholder="Enter your full name"
-                                        type="text"
-                                    />
-                                </label>
-                            </div>
-                            {/* <!-- Email --> */}
-                            <div class="sm:col-span-2">
-                                <label class="flex flex-col">
-                                    <p class="text-[#0e1b17] dark:text-gray-200 text-sm font-medium leading-normal pb-2">
-                                        Email Address
+                                )}
+                            </label>
+
+                            {/* Email */}
+                            <label className="flex flex-col mb-4">
+                                <p className="pb-2">Email Address</p>
+                                <input
+                                    {...register("email", { required: true })}
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    className="input w-full"
+                                />
+                                {errors.email && (
+                                    <p className="text-red-500">
+                                        Email is required
                                     </p>
-                                    <input
-                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b17] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e7e0] dark:border-gray-600 bg-background-light dark:bg-gray-700/50 focus:border-primary h-12 placeholder:text-[#4d9981] p-3 text-base font-normal leading-normal"
-                                        placeholder="Enter your email address"
-                                        type="email"
-                                    />
-                                </label>
-                            </div>
-                            {/* <!-- Avatar --> */}
-                            <div class="sm:col-span-2">
-                                <div class="flex items-center gap-4 bg-transparent min-h-14 justify-between">
-                                    <div class="flex items-center gap-4">
-                                        <div class="text-[#0e1b17] dark:text-white flex items-center justify-center rounded-full shrink-0 size-12">
-                                            <img src="./avater.jpeg" alt="" />
-                                        </div>
-                                        <p class="text-[#0e1b17] dark:text-gray-200 text-base font-normal leading-normal flex-1 truncate">
-                                            Avatar
-                                        </p>
-                                    </div>
-                                    <div class="shrink-0">
-                                        <button
-                                            class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#e7f3ef] dark:bg-gray-700 text-[#0e1b17] dark:text-white text-sm font-medium leading-normal w-fit transition-colors hover:bg-gray-200 dark:hover:bg-gray-600"
-                                            type="button"
-                                        >
-                                            <span class="truncate">
-                                                Upload Photo
-                                            </span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            {/* <!-- Blood Group --> */}
-                            <div>
-                                <label class="flex flex-col">
-                                    <p class="text-[#0e1b17] dark:text-gray-200 text-sm font-medium leading-normal pb-2">
-                                        Blood Group
+                                )}
+                            </label>
+
+                            {/* Photo */}
+                            <label className="flex flex-col mb-4">
+                                <p className="pb-2">Photo</p>
+                                <input
+                                    type="file"
+                                    {...register("photo", { required: true })}
+                                    className="file-input w-full"
+                                />
+                                {errors.photo && (
+                                    <p className="text-red-500">
+                                        Photo is required
                                     </p>
-                                    <select class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b17] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e7e0] dark:border-gray-600 bg-background-light dark:bg-gray-700/50 focus:border-primary h-12 p-3 text-base font-normal leading-normal">
-                                        <option>A+</option>
-                                        <option>A-</option>
-                                        <option>B+</option>
-                                        <option>B-</option>
-                                        <option>AB+</option>
-                                        <option>AB-</option>
-                                        <option>O+</option>
-                                        <option>O-</option>
-                                    </select>
-                                </label>
-                            </div>
-                            {/* <!-- District --> */}
-                            <div>
-                                <label class="flex flex-col">
-                                    <p class="text-[#0e1b17] dark:text-gray-200 text-sm font-medium leading-normal pb-2">
-                                        District
-                                    </p>
-                                    <select class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b17] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e7e0] dark:border-gray-600 bg-background-light dark:bg-gray-700/50 focus:border-primary h-12 p-3 text-base font-normal leading-normal">
-                                        <option disabled>
-                                            Select District
-                                        </option>
-                                        <option>dhaka</option>
-                                    </select>
-                                </label>
-                            </div>
-                            {/* <!-- Upazila --> */}
-                            <div class="sm:col-span-2">
-                                <label class="flex flex-col">
-                                    <p class="text-[#0e1b17] dark:text-gray-200 text-sm font-medium leading-normal pb-2">
-                                        Upazila
-                                    </p>
-                                    <select class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#4d9981] dark:text-gray-400 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e7e0] dark:border-gray-600 bg-background-light/50 dark:bg-gray-800/50 h-12 p-3 text-base font-normal leading-normal ">
-                                        <option disabled>Select Upazila</option>
-                                        <option>Raipura</option>
-                                    </select>
-                                </label>
-                            </div>
-                            {/* <!-- Password --> */}
-                            <div class="sm:col-span-2">
-                                <label class="flex flex-col">
-                                    <p class="text-[#0e1b17] dark:text-gray-200 text-sm font-medium leading-normal pb-2">
-                                        Password
-                                    </p>
-                                    <input
-                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b17] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e7e0] dark:border-gray-600 bg-background-light dark:bg-gray-700/50 focus:border-primary h-12 placeholder:text-[#4d9981] p-3 text-base font-normal leading-normal"
-                                        placeholder="Enter your password"
-                                        type="password"
-                                    />
-                                </label>
-                                <div class="mt-2 flex gap-1.5">
-                                    <div class="h-1.5 flex-1 rounded-full bg-gray-200 dark:bg-gray-600"></div>
-                                    <div class="h-1.5 flex-1 rounded-full bg-gray-200 dark:bg-gray-600"></div>
-                                    <div class="h-1.5 flex-1 rounded-full bg-gray-200 dark:bg-gray-600"></div>
-                                    <div class="h-1.5 flex-1 rounded-full bg-gray-200 dark:bg-gray-600"></div>
-                                </div>
-                            </div>
-                            {/* <!-- Confirm Password --> */}
-                            <div class="sm:col-span-2">
-                                <label class="flex flex-col">
-                                    <p class="text-[#0e1b17] dark:text-gray-200 text-sm font-medium leading-normal pb-2">
-                                        Confirm Password
-                                    </p>
-                                    <input
-                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e1b17] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e7e0] dark:border-gray-600 bg-background-light dark:bg-gray-700/50 focus:border-primary h-12 placeholder:text-[#4d9981] p-3 text-base font-normal leading-normal"
-                                        placeholder="Confirm your password"
-                                        type="password"
-                                    />
-                                </label>
-                            </div>
-                            {/* <!-- Register Button --> */}
-                            <div class="sm:col-span-2 mt-4">
-                                <button
-                                    class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] transition-colors hover:bg-primary/90"
-                                    type="submit"
+                                )}
+                            </label>
+
+                            {/* Blood Group */}
+                            <fieldset className="mb-4">
+                                <legend>Blood Group</legend>
+                                <select
+                                    {...register("bloodGroup", {
+                                        required: true,
+                                    })}
+                                    className="select w-full"
                                 >
-                                    <span class="truncate">Register</span>
-                                </button>
-                            </div>
-                            {/* <!-- Helper Text --> */}
-                            <div class="sm:col-span-2 text-center">
-                                <p class="text-xs text-gray-500 dark:text-gray-400">
-                                    Role: Donor | Status: Active by default —
-                                    admin may block.
-                                </p>
-                            </div>
+                                    <option value="">Pick a blood group</option>
+                                    <option>A+</option>
+                                    <option>A-</option>
+                                    <option>B+</option>
+                                    <option>B-</option>
+                                    <option>AB+</option>
+                                    <option>AB-</option>
+                                    <option>O+</option>
+                                    <option>O-</option>
+                                </select>
+                                {errors.bloodGroup && (
+                                    <p className="text-red-500">
+                                        Blood group is required
+                                    </p>
+                                )}
+                            </fieldset>
+
+                            {/* District */}
+                            <fieldset className="mb-4">
+                                <legend>District</legend>
+                                <select
+                                    {...register("district", {
+                                        required: true,
+                                    })}
+                                    className="select w-full"
+                                >
+                                    <option value="">Pick a district</option>
+                                    {district.map((el) => (
+                                        <option key={el.id} value={el.name}>
+                                            {el.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                {errors.district && (
+                                    <p className="text-red-500">
+                                        District is required
+                                    </p>
+                                )}
+                            </fieldset>
+
+                            {/* Upazila */}
+                            <fieldset className="mb-4">
+                                <legend>Upazila</legend>
+                                <select
+                                    {...register("upazila", { required: true })}
+                                    className="select w-full"
+                                >
+                                    <option value="">Pick an upazila</option>
+                                    {upozilaByDistrict(districtName).map(
+                                        (el, index) => (
+                                            <option key={index} value={el}>
+                                                {el}
+                                            </option>
+                                        )
+                                    )}
+                                </select>
+                                {errors.upazila && (
+                                    <p className="text-red-500">
+                                        Upazila is required
+                                    </p>
+                                )}
+                            </fieldset>
+
+                            {/* Password */}
+                            <label className="flex flex-col mb-4">
+                                <p className="pb-2">Password</p>
+                                <input
+                                    {...register("password", {
+                                        required: true,
+                                    })}
+                                    type="password"
+                                    className="input w-full"
+                                />
+                                {errors.password && (
+                                    <p className="text-red-500">
+                                        Password is required
+                                    </p>
+                                )}
+                            </label>
+
+                            {/* Confirm Password */}
+                            <label className="flex flex-col mb-4">
+                                <p className="pb-2">Confirm Password</p>
+                                <input
+                                    {...register("confirmPassword", {
+                                        required: true,
+                                    })}
+                                    type="password"
+                                    className="input w-full"
+                                />
+                                {errors.confirmPassword && (
+                                    <p className="text-red-500">
+                                        Confirm your password
+                                    </p>
+                                )}
+                            </label>
+
+                            {/* Submit */}
+                            <button
+                                type="submit"
+                                className="w-full h-12 rounded-full bg-primary text-white font-bold"
+                            >
+                                Register
+                            </button>
                         </form>
-                        {/* <!-- Footer Link --> */}
-                        <div class="mt-6 text-center">
-                            <p class="text-sm text-gray-600 dark:text-gray-300">
-                                Already have an account?
-                                <a
-                                    class="font-semibold text-primary hover:underline"
-                                    href="#"
+
+                        <div className="mt-6 text-center">
+                            <p>
+                                Already have an account?{" "}
+                                <NavLink
+                                    className="text-primary font-semibold"
+                                    to={"/login"}
                                 >
                                     Log In
-                                </a>
+                                </NavLink>
                             </p>
                         </div>
                     </div>

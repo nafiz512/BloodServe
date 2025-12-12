@@ -1,10 +1,25 @@
 import React from "react";
+import { use } from "react";
+import { useForm } from "react-hook-form";
 import { BiLock, BiSolidDonateBlood } from "react-icons/bi";
 import { BsEye } from "react-icons/bs";
 import { IoMdMail } from "react-icons/io";
 import { NavLink } from "react-router";
+import AuthContext from "../../../context/AuthContext";
 
 const Login = () => {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm();
+    const { signInUser } = use(AuthContext);
+
+    const handleLogin = (data) => {
+        signInUser(data.email, data.password).then((res) => {
+            // console.log(res.user);
+        });
+    };
     return (
         <div>
             <div className="font-display bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
@@ -48,7 +63,10 @@ const Login = () => {
                                         Log in to your account to continue.
                                     </p>
                                 </div>
-                                <form className="space-y-6">
+                                <form
+                                    onSubmit={handleSubmit(handleLogin)}
+                                    className="space-y-6"
+                                >
                                     {/* <!-- Email Field --> */}
                                     <div>
                                         <label className="block text-sm font-medium text-subtle-text-light dark:text-subtle-text-dark mb-2">
@@ -59,6 +77,9 @@ const Login = () => {
                                                 <IoMdMail></IoMdMail>
                                             </span>
                                             <input
+                                                {...register("email", {
+                                                    required: true,
+                                                })}
                                                 className="block w-full rounded-md border border-border-light dark:border-border-dark bg-background-light dark:bg-gray-800 py-3 pl-10 pr-3 text-text-light dark:text-text-dark placeholder:text-subtle-text-light dark:placeholder:text-subtle-text-dark focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 dark:focus:ring-primary/40 sm:text-sm"
                                                 id="email"
                                                 name="email"
@@ -68,7 +89,7 @@ const Login = () => {
                                             />
                                         </div>
                                         {/* <!-- Example Error Message --> */}
-                                        <p className="mt-2 text-sm text-error">
+                                        <p className="mt-2 hidden text-sm text-error">
                                             Invalid email format.
                                         </p>
                                     </div>
@@ -82,6 +103,9 @@ const Login = () => {
                                                 <BiLock></BiLock>
                                             </span>
                                             <input
+                                                {...register("password", {
+                                                    required: true,
+                                                })}
                                                 className="block w-full rounded-md border border-border-light dark:border-border-dark bg-background-light dark:bg-gray-800 py-3 pl-10 pr-10 text-text-light dark:text-text-dark placeholder:text-subtle-text-light dark:placeholder:text-subtle-text-dark focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 dark:focus:ring-primary/40 sm:text-sm"
                                                 id="password"
                                                 name="password"
