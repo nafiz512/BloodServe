@@ -1,6 +1,11 @@
 import React from "react";
+import { use } from "react";
+import AuthContext from "../../../context/AuthContext";
 
 const UserProfile = () => {
+    const { user } = use(AuthContext);
+    console.log(user);
+
     return (
         <div>
             <div className="flex-1 overflow-y-auto p-8">
@@ -38,7 +43,7 @@ const UserProfile = () => {
                                 </div>
                                 <div className="flex flex-col justify-center">
                                     <p className="text-text-light-primary dark:text-text-dark-primary text-2xl font-bold leading-tight tracking-[-0.015em]">
-                                        John Doe
+                                        {user.displayName}
                                     </p>
                                     <p className="text-text-light-secondary dark:text-text-dark-secondary text-base font-normal leading-normal">
                                         Blood Group: O+
@@ -68,47 +73,31 @@ const UserProfile = () => {
                                 <p className="text-text-light-primary dark:text-text-dark-primary text-base font-medium leading-normal pb-2">
                                     Full Name
                                 </p>
-                                <input
-                                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-border-light bg-background-light px-4 py-3 text-base font-normal leading-normal text-text-light-primary placeholder:text-text-light-secondary focus:border-primary focus:outline-0 focus:ring-2 focus:ring-primary/40 dark:border-border-dark dark:bg-background-dark dark:text-text-dark-primary dark:placeholder:text-text-dark-secondary"
-                                    value="John Doe"
-                                />
+                                <input className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-border-light bg-background-light px-4 py-3 text-base font-normal leading-normal text-text-light-primary placeholder:text-text-light-secondary focus:border-primary focus:outline-0 focus:ring-2 focus:ring-primary/40 dark:border-border-dark dark:bg-background-dark dark:text-text-dark-primary dark:placeholder:text-text-dark-secondary" />
                             </div>
                             <div className="flex flex-col">
                                 <p className="text-text-light-primary dark:text-text-dark-primary text-base font-medium leading-normal pb-2">
                                     Email Address
                                 </p>
-                                <input
-                                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-border-light bg-background-light/50 px-4 py-3 text-base font-normal leading-normal text-text-light-secondary placeholder:text-text-light-secondary focus:outline-0 focus:ring-0 cursor-not-allowed dark:border-border-dark dark:bg-background-dark/50 dark:text-text-dark-secondary"
-                                    disabled=""
-                                    value="john.doe@email.com"
-                                />
+                                <input className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-border-light bg-background-light/50 px-4 py-3 text-base font-normal leading-normal text-text-light-secondary placeholder:text-text-light-secondary focus:outline-0 focus:ring-0 cursor-not-allowed dark:border-border-dark dark:bg-background-dark/50 dark:text-text-dark-secondary" />
                             </div>
                             <div className="flex flex-col">
                                 <p className="text-text-light-primary dark:text-text-dark-primary text-base font-medium leading-normal pb-2">
                                     Blood Group
                                 </p>
-                                <input
-                                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-border-light bg-background-light px-4 py-3 text-base font-normal leading-normal text-text-light-primary placeholder:text-text-light-secondary focus:border-primary focus:outline-0 focus:ring-2 focus:ring-primary/40 dark:border-border-dark dark:bg-background-dark dark:text-text-dark-primary dark:placeholder:text-text-dark-secondary"
-                                    value="O+"
-                                />
+                                <input className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-border-light bg-background-light px-4 py-3 text-base font-normal leading-normal text-text-light-primary placeholder:text-text-light-secondary focus:border-primary focus:outline-0 focus:ring-2 focus:ring-primary/40 dark:border-border-dark dark:bg-background-dark dark:text-text-dark-primary dark:placeholder:text-text-dark-secondary" />
                             </div>
                             <div className="flex flex-col">
                                 <p className="text-text-light-primary dark:text-text-dark-primary text-base font-medium leading-normal pb-2">
                                     District
                                 </p>
-                                <input
-                                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-border-light bg-background-light px-4 py-3 text-base font-normal leading-normal text-text-light-primary placeholder:text-text-light-secondary focus:border-primary focus:outline-0 focus:ring-2 focus:ring-primary/40 dark:border-border-dark dark:bg-background-dark dark:text-text-dark-primary dark:placeholder:text-text-dark-secondary"
-                                    value="Dhaka"
-                                />
+                                <input className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-border-light bg-background-light px-4 py-3 text-base font-normal leading-normal text-text-light-primary placeholder:text-text-light-secondary focus:border-primary focus:outline-0 focus:ring-2 focus:ring-primary/40 dark:border-border-dark dark:bg-background-dark dark:text-text-dark-primary dark:placeholder:text-text-dark-secondary" />
                             </div>
                             <div className="flex flex-col md:col-span-2">
                                 <p className="text-text-light-primary dark:text-text-dark-primary text-base font-medium leading-normal pb-2">
                                     Upazila
                                 </p>
-                                <input
-                                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-border-light bg-background-light px-4 py-3 text-base font-normal leading-normal text-text-light-primary placeholder:text-text-light-secondary focus:border-primary focus:outline-0 focus:ring-2 focus:ring-primary/40 dark:border-border-dark dark:bg-background-dark dark:text-text-dark-primary dark:placeholder:text-text-dark-secondary"
-                                    value="Savar"
-                                />
+                                <input className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-border-light bg-background-light px-4 py-3 text-base font-normal leading-normal text-text-light-primary placeholder:text-text-light-secondary focus:border-primary focus:outline-0 focus:ring-2 focus:ring-primary/40 dark:border-border-dark dark:bg-background-dark dark:text-text-dark-primary dark:placeholder:text-text-dark-secondary" />
                             </div>
                         </div>
                     </div>
