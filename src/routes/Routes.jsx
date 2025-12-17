@@ -6,7 +6,7 @@ import Home from "../Pages/Home/Home";
 import Requests from "../Pages/Requests/Requests";
 import About from "../Pages/About/About";
 import Contact from "../Pages/Contact/Contact";
-import Foundings from "../Pages/Foundings/Foundings";
+import Funding from "../Pages/Dashboard/Funding/Funding"
 import Login from "../Pages/Auth/Login/Login";
 import Register from "../Pages/Auth/Register/Register";
 import DetailsRequests from "../Pages/DetailsRequests/DetailsRequests";
@@ -16,11 +16,13 @@ import UserProfile from "../Pages/Dashboard/UserProfile/UserProfile";
 import CreateDonationRequest from "../Pages/Dashboard/CreateDonationRequest/CreateDonationRequest";
 import DonorManagement from "../Pages/Dashboard/DonorManagement/DonorManagement";
 import AllDonationRequests from "../Pages/Dashboard/AllDonationRequests/AllDonationRequests";
-import Funding from "../Pages/Dashboard/Funding/Funding";
+
+import PrivateRoute from "./PrivateRoute";
 
 const Routes = createBrowserRouter([
     {
         path: "/",
+
         element: <RootLayout></RootLayout>,
         children: [
             {
@@ -49,8 +51,8 @@ const Routes = createBrowserRouter([
                 element: <DetailsRequests></DetailsRequests>,
             },
             {
-                path: "/foundings",
-                element: <Foundings></Foundings>,
+                path: "/fundings",
+                element: <Funding></Funding>,
             },
             {
                 path: "/about",
@@ -64,7 +66,7 @@ const Routes = createBrowserRouter([
     },
     {
         path: "dashboard",
-        element: <DashboardLayout></DashboardLayout>,
+        element: <PrivateRoute> <DashboardLayout></DashboardLayout>    </PrivateRoute>,
         children: [
             {
                 index: true,
@@ -79,7 +81,7 @@ const Routes = createBrowserRouter([
                 element: <CreateDonationRequest></CreateDonationRequest>,
             },
             {
-                path: "donor-management",
+                path: "all-users",
                 element: <DonorManagement></DonorManagement>,
             },
             {
