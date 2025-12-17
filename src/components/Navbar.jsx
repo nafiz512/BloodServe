@@ -7,7 +7,6 @@ import AuthContext from "../context/AuthContext";
 
 const Navbar = () => {
     const { user, logOut } = use(AuthContext);
-    console.log(user);
 
     const links = (
         <>
@@ -21,7 +20,7 @@ const Navbar = () => {
                 <NavLink to={"/requests"}>Requests</NavLink>
             </li>
             <li>
-                <NavLink to={"/foundings"}>Foundings</NavLink>
+                <NavLink to={"/fundings"}>Fundings</NavLink>
             </li>
             <li>
                 <NavLink to={"/about"}>About us </NavLink>
