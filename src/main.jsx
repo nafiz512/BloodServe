@@ -5,9 +5,11 @@ import "./index.css";
 import { RouterProvider } from "react-router/dom";
 import Routes from "./routes/Routes.jsx";
 import AuthProvider from "./context/AuthProvider.jsx";
+import LocationProvider from "./context/LocationProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
     <AuthProvider>
-        <RouterProvider router={Routes} />
+        <LocationProvider> <RouterProvider router={Routes} /> </LocationProvider>
+
     </AuthProvider>
 );

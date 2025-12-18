@@ -1,193 +1,213 @@
-import React from "react";
+import React, { useContext, useState, useEffect } from "react";
+import Swal from "sweetalert2";
+import useAxios from "../../../hooks/useAxios";
+import AuthContext from "../../../context/AuthContext";
+import { BiDonateBlood } from "react-icons/bi";
 
 const Funding = () => {
+    const axios = useAxios();
+    const { user } = useContext(AuthContext);
+    const [funds, setFunds] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        axios
+            .get("/all-funds")
+            .then((res) => {
+                setFunds(res.data);
+            })
+            .catch((err) => {
+                Swal.fire({
+                    icon: "error",
+                    title: err.message,
+                    text: "Something went wrong!",
+                });
+            })
+            .finally(() => setLoading(false));
+    }, [axios]);
+
+    const handleGiveFund = () => {
+        Swal.fire({
+            title: "Donate to the Fund",
+            html: `
+        <input 
+          type="number" 
+          id="swal-input-amount" 
+          class="swal2-input" 
+          placeholder="Enter amount in USD" 
+          min="1" 
+          step="0.01"
+        >
+      `,
+            showCancelButton: true,
+            confirmButtonColor: "#6366f1", // Indigo
+            cancelButtonColor: "#ef4444",
+            confirmButtonText: "Proceed to Payment",
+            preConfirm: () => {
+                const amount = document.getElementById("swal-input-amount").value;
+                if (!amount || amount <= 0) {
+                    Swal.showValidationMessage("Please enter a valid amount");
+                }
+                return parseFloat(amount);
+            },
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const payInfo = {
+                    amount: result.value,
+                    email: user?.email,
+                    name: user?.displayName || "Anonymous",
+                    createAt: new Date(),
+                };
+
+                try {
+                    const res = await axios.post("create-checkout-session", payInfo);
+                    window.location.assign(res.data.url);
+                } catch {
+                    Swal.fire("Error", "Payment initiation failed", "error");
+                }
+            }
+        });
+    };
+
+    // Format date nicely
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    };
+
+    // Calculate total funds
+    // const totalFunds = funds.reduce((sum, fund) => sum + parseFloat(fund.amount || 0), 0).toFixed(2);
+
     return (
-        <div>
-            <div className="flex-1 p-8">
-                <div className="flex flex-col gap-6 max-w-7xl mx-auto">
-                    {/* <!-- PageHeading & Stats --> */}
-                    <div className="flex flex-wrap justify-between items-start gap-6">
-                        <div className="flex flex-col gap-6">
-                            <h1 className="text-text-light dark:text-text-dark text-4xl font-black leading-tight tracking-[-0.033em]">
-                                Funding
-                            </h1>
-                            <div className="flex min-w-[280px] flex-1 flex-col gap-2 rounded-xl p-6 bg-foreground-light dark:bg-foreground-dark border border-border-light dark:border-border-dark shadow-sm">
-                                <p className="text-text-light dark:text-text-dark text-base font-medium leading-normal">
-                                    Total Funds Raised
-                                </p>
-                                <p className="text-primary tracking-light text-3xl font-bold leading-tight">
-                                    $12,345.67
-                                </p>
-                            </div>
-                        </div>
-                        <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/30 hover:bg-opacity-90 transition-colors">
-                            <span className="truncate">Give fund</span>
-                        </button>
+        <div className="min-h-screen  dark:from-gray-900 dark:to-black py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8 mb-12">
+                    <div>
+                        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+                            All Fundings
+                        </h1>
+                        <p className="mt-3 text-lg text-gray-600 dark:text-gray-400">
+                            Support the community by contributing to our shared fund
+                        </p>
                     </div>
-                    {/* <!-- Table --> */}
-                    <div className="flex flex-col gap-4">
-                        <h2 className="text-text-light dark:text-text-dark text-2xl font-bold">
+
+                    <button
+                        onClick={handleGiveFund}
+                        className="group relative flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-green-700 rounded-2xl shadow-2xl hover:shadow-indigo-500/30 transform hover:scale-105 transition-all duration-300 overflow-hidden"
+                    >
+                        <span className="relative flex gap-2 justify-center items-center z-10"> <span>Give Fund</span> <BiDonateBlood></BiDonateBlood></span>
+                        <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                    </button>
+                </div>
+
+
+
+                {/* Transaction History */}
+                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                    <div className="px-8 py-6 border-b border-gray-200 dark:border-gray-700">
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                             Transaction History
                         </h2>
-                        <div className="overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-foreground-light dark:bg-foreground-dark">
-                            <div className="overflow-x-auto">
-                                <table className="w-full">
-                                    <thead>
-                                        <tr className="bg-foreground-light dark:bg-foreground-dark">
-                                            <th className="px-6 py-4 text-left text-text-light dark:text-text-dark text-sm font-medium leading-normal">
-                                                Name
-                                            </th>
-                                            <th className="px-6 py-4 text-left text-text-light dark:text-text-dark text-sm font-medium leading-normal">
-                                                Amount
-                                            </th>
-                                            <th className="px-6 py-4 text-left text-text-light dark:text-text-dark text-sm font-medium leading-normal">
-                                                Date
-                                            </th>
-                                            <th className="px-6 py-4 text-left text-text-light dark:text-text-dark text-sm font-medium leading-normal">
-                                                Status
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr className="border-t border-border-light dark:border-border-dark">
-                                            <td className="h-[72px] px-6 py-2 text-text-light dark:text-text-dark text-sm font-normal leading-normal">
-                                                John Doe
-                                            </td>
-                                            <td className="h-[72px] px-6 py-2 text-subtle-light dark:text-subtle-dark text-sm font-normal leading-normal">
-                                                $50.00
-                                            </td>
-                                            <td className="h-[72px] px-6 py-2 text-subtle-light dark:text-subtle-dark text-sm font-normal leading-normal">
-                                                Oct 27, 2023
-                                            </td>
-                                            <td className="h-[72px] px-6 py-2 text-sm font-normal leading-normal">
-                                                <div className="flex items-center gap-2 rounded-full py-1 px-3 bg-primary/20 text-primary w-fit">
-                                                    <span className="w-2 h-2 rounded-full bg-primary"></span>
-                                                    <span>Completed</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr className="border-t border-border-light dark:border-border-dark">
-                                            <td className="h-[72px] px-6 py-2 text-text-light dark:text-text-dark text-sm font-normal leading-normal">
-                                                Jane Smith
-                                            </td>
-                                            <td className="h-[72px] px-6 py-2 text-subtle-light dark:text-subtle-dark text-sm font-normal leading-normal">
-                                                $100.00
-                                            </td>
-                                            <td className="h-[72px] px-6 py-2 text-subtle-light dark:text-subtle-dark text-sm font-normal leading-normal">
-                                                Oct 26, 2023
-                                            </td>
-                                            <td className="h-[72px] px-6 py-2 text-sm font-normal leading-normal">
-                                                <div className="flex items-center gap-2 rounded-full py-1 px-3 bg-primary/20 text-primary w-fit">
-                                                    <span className="w-2 h-2 rounded-full bg-primary"></span>
-                                                    <span>Completed</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr className="border-t border-border-light dark:border-border-dark">
-                                            <td className="h-[72px] px-6 py-2 text-text-light dark:text-text-dark text-sm font-normal leading-normal">
-                                                Anonymous Donor
-                                            </td>
-                                            <td className="h-[72px] px-6 py-2 text-subtle-light dark:text-subtle-dark text-sm font-normal leading-normal">
-                                                $25.00
-                                            </td>
-                                            <td className="h-[72px] px-6 py-2 text-subtle-light dark:text-subtle-dark text-sm font-normal leading-normal">
-                                                Oct 25, 2023
-                                            </td>
-                                            <td className="h-[72px] px-6 py-2 text-sm font-normal leading-normal">
-                                                <div className="flex items-center gap-2 rounded-full py-1 px-3 bg-primary/20 text-primary w-fit">
-                                                    <span className="w-2 h-2 rounded-full bg-primary"></span>
-                                                    <span>Completed</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr className="border-t border-border-light dark:border-border-dark">
-                                            <td className="h-[72px] px-6 py-2 text-text-light dark:text-text-dark text-sm font-normal leading-normal">
-                                                Michael Brown
-                                            </td>
-                                            <td className="h-[72px] px-6 py-2 text-subtle-light dark:text-subtle-dark text-sm font-normal leading-normal">
-                                                $75.00
-                                            </td>
-                                            <td className="h-[72px] px-6 py-2 text-subtle-light dark:text-subtle-dark text-sm font-normal leading-normal">
-                                                Oct 24, 2023
-                                            </td>
-                                            <td className="h-[72px] px-6 py-2 text-sm font-normal leading-normal">
-                                                <div className="flex items-center gap-2 rounded-full py-1 px-3 bg-primary/20 text-primary w-fit">
-                                                    <span className="w-2 h-2 rounded-full bg-primary"></span>
-                                                    <span>Completed</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr className="border-t border-border-light dark:border-border-dark">
-                                            <td className="h-[72px] px-6 py-2 text-text-light dark:text-text-dark text-sm font-normal leading-normal">
-                                                Emily White
-                                            </td>
-                                            <td className="h-[72px] px-6 py-2 text-subtle-light dark:text-subtle-dark text-sm font-normal leading-normal">
-                                                $150.00
-                                            </td>
-                                            <td className="h-[72px] px-6 py-2 text-subtle-light dark:text-subtle-dark text-sm font-normal leading-normal">
-                                                Oct 23, 2023
-                                            </td>
-                                            <td className="h-[72px] px-6 py-2 text-sm font-normal leading-normal">
-                                                <div className="flex items-center gap-2 rounded-full py-1 px-3 bg-primary/20 text-primary w-fit">
-                                                    <span className="w-2 h-2 rounded-full bg-primary"></span>
-                                                    <span>Completed</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                            All contributions made to the fund
+                        </p>
                     </div>
-                    {/* <!-- Pagination --> */}
-                    <div className="flex items-center justify-center p-4">
-                        <a
-                            className="flex size-10 items-center justify-center rounded-full hover:bg-primary/20 text-text-light dark:text-text-dark"
-                            href="#"
-                        >
-                            <span className="material-symbols-outlined text-lg">
-                                chevron_left
-                            </span>
-                        </a>
-                        <a
-                            className="text-sm font-bold leading-normal tracking-[0.015em] flex size-10 items-center justify-center text-white rounded-full bg-primary"
-                            href="#"
-                        >
-                            1
-                        </a>
-                        <a
-                            className="text-sm font-normal leading-normal flex size-10 items-center justify-center text-text-light dark:text-text-dark rounded-full hover:bg-primary/20"
-                            href="#"
-                        >
-                            2
-                        </a>
-                        <a
-                            className="text-sm font-normal leading-normal flex size-10 items-center justify-center text-text-light dark:text-text-dark rounded-full hover:bg-primary/20"
-                            href="#"
-                        >
-                            3
-                        </a>
-                        <a
-                            className="text-sm font-normal leading-normal flex size-10 items-center justify-center text-text-light dark:text-text-dark rounded-full hover:bg-primary/20"
-                            href="#"
-                        >
-                            4
-                        </a>
-                        <a
-                            className="text-sm font-normal leading-normal flex size-10 items-center justify-center text-text-light dark:text-text-dark rounded-full hover:bg-primary/20"
-                            href="#"
-                        >
-                            5
-                        </a>
-                        <a
-                            className="flex size-10 items-center justify-center rounded-full hover:bg-primary/20 text-text-light dark:text-text-dark"
-                            href="#"
-                        >
-                            <span className="material-symbols-outlined text-lg">
-                                chevron_right
-                            </span>
-                        </a>
+
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead className="bg-gray-50 dark:bg-gray-900/50">
+                                <tr>
+                                    <th className="px-8 py-5 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                        Donor
+                                    </th>
+                                    <th className="px-8 py-5 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                        Amount
+                                    </th>
+                                    <th className="px-8 py-5 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                        Date
+                                    </th>
+                                    <th className="px-8 py-5 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                        Status
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan="4" className="px-8 py-20 text-center text-gray-500">
+                                            <div className="flex justify-center items-center">
+                                                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+                                                <span className="ml-3">Loading transactions...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ) : funds.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="4" className="px-8 py-20 text-center text-gray-500 dark:text-gray-400">
+                                            <div className="text-6xl mb-4">📭</div>
+                                            <p className="text-lg">No contributions yet</p>
+                                            <p className="text-sm mt-2">Be the first to donate!</p>
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    funds.map((fund, index) => (
+                                        <tr
+                                            key={index}
+                                            className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                                        >
+                                            <td className="px-4 py-6 whitespace-nowrap">
+                                                <div className="flex items-center">
+                                                    <div className="ml-4">
+                                                        <div className="text-sm font-medium text-gray-900 dark:text-white">
+                                                            {fund.name || "Anonymous"}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-8 py-6 whitespace-nowrap">
+                                                <span className="text-lg font-semibold text-indigo-600 dark:text-indigo-400">
+                                                    ${parseFloat(fund.amount || 0).toFixed(2)}
+                                                </span>
+                                            </td>
+                                            <td className="px-8 py-6 text-sm text-gray-600 dark:text-gray-400">
+                                                {formatDate(fund.createAt)}
+                                            </td>
+                                            <td className="px-8 py-6 whitespace-nowrap">
+                                                <span className="inline-flex items-center px-4 py-2 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                                    <span className="w-2 h-2 mr-2 rounded-full bg-green-500"></span>
+                                                    Completed
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
                     </div>
+
+                    {/* Scrollable body if >5 items */}
+                    {funds.length > 5 && (
+                        <style jsx>{`
+              tbody {
+                display: block;
+                max-height: 480px;
+                overflow-y: auto;
+              }
+              thead,
+              tbody tr {
+                display: table;
+                width: 100%;
+                table-layout: fixed;
+              }
+            `}</style>
+                    )}
                 </div>
             </div>
         </div>

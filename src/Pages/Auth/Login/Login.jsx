@@ -4,25 +4,28 @@ import { useForm } from "react-hook-form";
 import { BiLock, BiSolidDonateBlood } from "react-icons/bi";
 import { BsEye } from "react-icons/bs";
 import { IoMdMail } from "react-icons/io";
-import { NavLink } from "react-router";
+import { NavLink, useLocation, useNavigate } from "react-router";
 import AuthContext from "../../../context/AuthContext";
 
 const Login = () => {
     const {
         register,
         handleSubmit,
-        formState: { errors },
+
     } = useForm();
     const { signInUser } = use(AuthContext);
+    const location = useLocation();
+    const navigate = useNavigate();
+
 
     const handleLogin = (data) => {
-        signInUser(data.email, data.password).then((res) => {
-            // console.log(res.user);
+        signInUser(data.email, data.password).then(() => {
+            navigate(location.state || '/');
         });
     };
     return (
         <div>
-            <div className="font-display bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+            <div className="font-display   text-text-light dark:text-text-dark">
                 <div className="flex min-h-screen w-full items-center justify-center p-4">
                     <div className="grid w-full max-w-6xl grid-cols-1 overflow-hidden rounded-xl shadow-lg md:grid-cols-2">
                         {/* <!-- Left Column: Branding --> */}
@@ -53,7 +56,7 @@ const Login = () => {
                             </div>
                         </div>
                         {/* <!-- Right Column: Form --> */}
-                        <div className="flex w-full flex-col justify-center bg-white dark:bg-background-dark p-8 sm:p-12">
+                        <div className="flex w-full flex-col justify-center bg-white  p-8 sm:p-12">
                             <div className="w-full max-w-md">
                                 <div className="mb-8 text-left">
                                     <h2 className="text-3xl font-bold text-text-light dark:text-text-dark">
@@ -80,7 +83,7 @@ const Login = () => {
                                                 {...register("email", {
                                                     required: true,
                                                 })}
-                                                className="block w-full rounded-md border border-border-light dark:border-border-dark bg-background-light dark:bg-gray-800 py-3 pl-10 pr-3 text-text-light dark:text-text-dark placeholder:text-subtle-text-light dark:placeholder:text-subtle-text-dark focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 dark:focus:ring-primary/40 sm:text-sm"
+                                                className="block w-full rounded-md border border-border-light dark:border-border-dark  dark:bg-gray-800 py-3 pl-10 pr-3 text-text-light dark:text-text-dark placeholder:text-subtle-text-light dark:placeholder:text-subtle-text-dark focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 dark:focus:ring-primary/40 sm:text-sm"
                                                 id="email"
                                                 name="email"
                                                 placeholder="you@example.com"
@@ -106,7 +109,7 @@ const Login = () => {
                                                 {...register("password", {
                                                     required: true,
                                                 })}
-                                                className="block w-full rounded-md border border-border-light dark:border-border-dark bg-background-light dark:bg-gray-800 py-3 pl-10 pr-10 text-text-light dark:text-text-dark placeholder:text-subtle-text-light dark:placeholder:text-subtle-text-dark focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 dark:focus:ring-primary/40 sm:text-sm"
+                                                className="block w-full rounded-md border border-border-light dark:border-border-dark  dark:bg-gray-800 py-3 pl-10 pr-10 text-text-light dark:text-text-dark placeholder:text-subtle-text-light dark:placeholder:text-subtle-text-dark focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 dark:focus:ring-primary/40 sm:text-sm"
                                                 id="password"
                                                 name="password"
                                                 placeholder="Enter your password"

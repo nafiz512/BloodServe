@@ -1,9 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { NavLink } from "react-router";
+import { NavLink, useLocation, useNavigate } from "react-router";
 import AuthContext from "../../../context/AuthContext";
 import useAxios from "../../../hooks/useAxios";
 import axios from "axios";
+import LocationContext from "../../../context/LocationContext";
+import Swal from "sweetalert2";
 
 const Register = () => {
     const {
@@ -14,42 +16,26 @@ const Register = () => {
         formState: { errors },
     } = useForm();
     const axiosSecure = useAxios();
-
+    const { districts, upazilas } = useContext(LocationContext)
+    const location = useLocation();
+    const navigate = useNavigate();
     const { registerUser, updateUserProfile } = useContext(AuthContext);
-    const [district, setDistrict] = useState([]);
-    const [upozila, setUpozila] = useState([]);
-
     const districtName = useWatch({ control, name: "district" });
-
-    // Load district data
-    useEffect(() => {
-        axios.get("./district.json").then((data) => {
-            setDistrict(data.data);
-        });
-    }, []);
-
-    // Load upazila data
-    useEffect(() => {
-        axios.get("./upozila.json").then((data) => {
-            setUpozila(data.data);
-        });
-    }, []);
 
     // Reset upazila when district changes
     useEffect(() => {
-        setValue("upazila", ""); // reset to placeholder
+        setValue("upazila", "");
     }, [districtName, setValue]);
 
-    // Filter Upazila by District
-    const upozilaByDistrict = (districtName) => {
-        const dis = district.find((el) => el.name === districtName);
+    // Filter Upazila by District (USING CONTEXT DATA)
+    const getUpazilaByDistrict = (districtName) => {
+        const district = districts.find((d) => d.name === districtName);
 
-        if (dis?.id) {
-            return upozila
-                .filter((el) => el.district_id === dis.id)
-                .map((el) => el.name);
-        }
-        return [];
+        if (!district) return [];
+
+        return upazilas
+            .filter((u) => u.district_id === district.id)
+            .map((u) => u.name);
     };
 
     const handleRegistration = (data) => {
@@ -63,9 +49,8 @@ const Register = () => {
             formData.append("image", profileImg);
 
             // 2. send the photo to store and get the ul
-            const image_API_URL = `https://api.imgbb.com/1/upload?key=${
-                import.meta.env.VITE_image_host_key
-            }`;
+            const image_API_URL = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_host_key
+                }`;
 
             axios.post(image_API_URL, formData).then((res) => {
                 const photoURL = res.data.data.url;
@@ -77,12 +62,7 @@ const Register = () => {
                 delete userInfo.password;
                 delete userInfo.confirmPassword;
 
-                userInfo.po;
-                axiosSecure.post("/users", userInfo).then((res) => {
-                    if (res.data.insertedId) {
-                        console.log("user created in the database");
-                    }
-                });
+                axiosSecure.post("/users", userInfo);
 
                 // update user profile to firebase
                 const userProfile = {
@@ -92,10 +72,16 @@ const Register = () => {
 
                 updateUserProfile(userProfile)
                     .then(() => {
-                        // console.log('user profile updated done.')
-                        // navigate(location.state || '/');
+
+                        navigate(location.state || '/');
                     })
-                    .catch((error) => console.log(error));
+                    .catch((error) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: error.message,
+                            text: "Something went wrong!",
+                        });
+                    });
             });
         });
     };
@@ -213,7 +199,7 @@ const Register = () => {
                                     className="select w-full"
                                 >
                                     <option value="">Pick a district</option>
-                                    {district.map((el) => (
+                                    {districts.map((el) => (
                                         <option key={el.id} value={el.name}>
                                             {el.name}
                                         </option>
@@ -234,7 +220,7 @@ const Register = () => {
                                     className="select w-full"
                                 >
                                     <option value="">Pick an upazila</option>
-                                    {upozilaByDistrict(districtName).map(
+                                    {getUpazilaByDistrict(districtName).map(
                                         (el, index) => (
                                             <option key={index} value={el}>
                                                 {el}

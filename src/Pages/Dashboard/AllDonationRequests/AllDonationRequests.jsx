@@ -1,22 +1,25 @@
 import React, { use, useEffect, useState } from "react";
-import { BsEye } from "react-icons/bs";
+import { BsEye, BsThreeDotsVertical } from "react-icons/bs";
 import { BiEdit } from "react-icons/bi";
 import { MdCancel, MdDelete, MdDone } from "react-icons/md";
-import useAxios from "../../../hooks/useAxios";
+// import useAxios from "../../../hooks/useAxios";
 import AuthContext from "../../../context/AuthContext";
 import { RiArrowDropLeftFill, RiArrowLeftBoxFill, RiArrowLeftLine, RiArrowRightLine } from "react-icons/ri";
 import { NavLink } from "react-router";
 import Swal from 'sweetalert2'
 import useRole from "../../../hooks/useRole";
+import useSecureAxios from "../../../hooks/useSecureAxios";
 
 const AllDonationRequests = () => {
-    const axios = useAxios();
+    const axios = useSecureAxios();
     const { user } = use(AuthContext);
     const [requests, setRequests] = useState([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [reFetch, setRefetch] = useState(0);
     const { role } = useRole();
+    const [filterStatus, setFilterStatus] = useState("all");
+
     const limit = 4;
 
     useEffect(() => {
@@ -75,6 +78,11 @@ const AllDonationRequests = () => {
             }
         });
     }
+    const filteredRequests =
+        filterStatus === "all"
+            ? requests
+            : requests.filter(req => req.status === filterStatus);
+
 
     return (
         <div>
@@ -87,35 +95,53 @@ const AllDonationRequests = () => {
                         </p>
                     </div>
                     {
-                        totalPages > 0 ? <div className="bg-white dark:bg-gray-900/50 rounded-lg shadow-sm p-6">
-                            {/* <!-- Chips --> */}
-                            <div className="flex gap-3 mb-4 overflow-x-auto pb-2">
-                                <button className="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary/20 px-4">
-                                    <p className="text-gray-900 dark:text-gray-50 text-sm font-medium leading-normal">
-                                        All
-                                    </p>
-                                </button>
-                                <button className="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-gray-100 dark:bg-gray-800 px-4 hover:bg-gray-200 dark:hover:bg-gray-700">
-                                    <p className="text-gray-800 dark:text-gray-200 text-sm font-medium leading-normal">
-                                        Pending
-                                    </p>
-                                </button>
-                                <button className="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-gray-100 dark:bg-gray-800 px-4 hover:bg-gray-200 dark:hover:bg-gray-700">
-                                    <p className="text-gray-800 dark:text-gray-200 text-sm font-medium leading-normal">
-                                        In Progress
-                                    </p>
-                                </button>
-                                <button className="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-gray-100 dark:bg-gray-800 px-4 hover:bg-gray-200 dark:hover:bg-gray-700">
-                                    <p className="text-gray-800 dark:text-gray-200 text-sm font-medium leading-normal">
-                                        Done
-                                    </p>
-                                </button>
-                                <button className="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-gray-100 dark:bg-gray-800 px-4 hover:bg-gray-200 dark:hover:bg-gray-700">
-                                    <p className="text-gray-800 dark:text-gray-200 text-sm font-medium leading-normal">
-                                        Canceled
-                                    </p>
-                                </button>
+                        totalPages > 0 ? <div className="bg-white w-full dark:bg-gray-900/50 rounded-lg shadow-2xl p-6">
+
+                            <div className="flex gap-3 w-full mb-4 overflow-x-auto pb-2">
+                                <div className="join w-full">
+                                    <input
+                                        className="join-item btn "
+                                        type="radio"
+                                        name="options"
+                                        aria-label="All"
+                                        checked={filterStatus === "all"}
+                                        onChange={() => setFilterStatus("all")}
+                                    />
+                                    <input
+                                        className="join-item btn "
+                                        type="radio"
+                                        name="options"
+                                        aria-label="Pending"
+                                        checked={filterStatus === "pending"}
+                                        onChange={() => setFilterStatus("pending")}
+                                    />
+                                    <input
+                                        className="join-item btn "
+                                        type="radio"
+                                        name="options"
+                                        aria-label="In Progress"
+                                        checked={filterStatus === "inprogress"}
+                                        onChange={() => setFilterStatus("inprogress")}
+                                    />
+                                    <input
+                                        className="join-item btn "
+                                        type="radio"
+                                        name="options"
+                                        aria-label="Done"
+                                        checked={filterStatus === "done"}
+                                        onChange={() => setFilterStatus("done")}
+                                    />
+                                    <input
+                                        className="join-item btn "
+                                        type="radio"
+                                        name="options"
+                                        aria-label="Canceled"
+                                        checked={filterStatus === "cancel"}
+                                        onChange={() => setFilterStatus("cancel")}
+                                    />
+                                </div>
                             </div>
+
                             {/* <!-- Table --> */}
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left">
@@ -144,7 +170,7 @@ const AllDonationRequests = () => {
                                     </thead>
                                     <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
                                         {
-                                            requests.map(el => <tr key={el._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                            filteredRequests.map(el => <tr key={el._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                                                 <td className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
                                                     {el.recipientName}
                                                 </td>
@@ -170,19 +196,33 @@ const AllDonationRequests = () => {
 
                                                 <td className="">
                                                     <div className="flex gap-4 justify-center">
-                                                        <NavLink to={`/requests/${el._id}`}>
-                                                            <button className=" text-subtle-text-light hover:text-primary dark:text-subtle-text-dark dark:hover:text-primary" title="View details"><span className="material-symbols-outlined text-2xl"><BsEye></BsEye></span></button>
-                                                        </NavLink>
-                                                        {
-                                                            el.status === "inprogress" && <><button onClick={() => handleChangeStatus(el._id, "done")} className="text-subtle-text-light hover:text-primary dark:text-subtle-text-dark dark:hover:text-primary" title="Edit request"><span className="material-symbols-outlined text-2xl"><MdDone></MdDone></span></button>
-                                                                <button onClick={() => handleChangeStatus(el._id, "cancel")} className="text-subtle-text-light hover:text-primary dark:text-subtle-text-dark dark:hover:text-primary" title="Edit request"><span className="material-symbols-outlined text-2xl"><MdCancel></MdCancel></span></button>
-                                                            </>
-                                                        }
-                                                        {
-                                                            role == 'admin' || role == 'donor' ? <> <button className="text-subtle-text-light hover:text-primary dark:text-subtle-text-dark dark:hover:text-primary" title="Edit request"><span className="material-symbols-outlined text-2xl"><BiEdit></BiEdit></span></button>
-                                                                <button onClick={() => handleDelete(el._id)} className="text-error/80 hover:text-error" title="Delete request"><span className="material-symbols-outlined text-2xl">< MdDelete /></span></button></> : ''
-                                                        }
 
+                                                        <div className="dropdown dropdown-left">
+
+                                                            <button tabIndex={0} role="button" className="text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary">
+                                                                <span className="material-symbols-outlined">
+                                                                    <BsThreeDotsVertical />
+                                                                </span>
+                                                            </button>
+                                                            <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+
+                                                                <li className=" text-subtle-text-light hover:text-primary dark:text-subtle-text-dark dark:hover:text-primary" title="View details"><NavLink to={`/requests/${el._id}`}>View </NavLink></li>
+
+                                                                {
+                                                                    el.status === "inprogress" && <>
+                                                                        <li onClick={() => handleChangeStatus(el._id, "done")} className="text-subtle-text-light hover:text-primary dark:text-subtle-text-dark dark:hover:text-primary" title="Edit request"><a>Done</a>
+                                                                        </li>
+
+                                                                        <li onClick={() => handleChangeStatus(el._id, "cancel")} className="text-subtle-text-light hover:text-primary dark:text-subtle-text-dark dark:hover:text-primary" title="Edit request"><a>Cancel</a></li>
+                                                                    </>
+                                                                }
+
+                                                                {
+                                                                    role == 'admin' || role == 'donor' ? <> <li className="text-subtle-text-light hover:text-primary dark:text-subtle-text-dark dark:hover:text-primary" title="Edit request"><NavLink to={`/dashboard/update-donation-request/${el._id}`} >Edit</NavLink></li>
+                                                                        <li onClick={() => handleDelete(el._id)} className="text-error/80 hover:text-error" title="Delete request"><a >Delete</a></li></> : ''
+                                                                }
+                                                            </ul>
+                                                        </div>
                                                     </div>
                                                 </td>
                                             </tr>)

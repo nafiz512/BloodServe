@@ -14,14 +14,17 @@ const Navbar = () => {
                 <NavLink to={"/"}>Home</NavLink>
             </li>
             <li>
-                <NavLink to={"/find-doners"}>Find Doners</NavLink>
+                <NavLink to={"/find-donors"}>Search Donors</NavLink>
             </li>
             <li>
                 <NavLink to={"/requests"}>Requests</NavLink>
             </li>
-            <li>
-                <NavLink to={"/fundings"}>Fundings</NavLink>
-            </li>
+            {
+                user ? <li>
+                    <NavLink to={"/fundings"}>Fundings</NavLink>
+                </li> : ""
+            }
+
             <li>
                 <NavLink to={"/about"}>About us </NavLink>
             </li>

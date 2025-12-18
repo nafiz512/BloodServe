@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import LocationContext from './LocationContext';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const LocationProvider = ({ children }) => {
     const [districts, setDistricts] = useState([]);
@@ -18,7 +19,12 @@ const LocationProvider = ({ children }) => {
                 setDistricts(districtRes.data);
                 setUpazilas(upazilaRes.data);
             } catch (error) {
-                console.error("Location data load failed", error);
+
+                Swal.fire({
+                    icon: "error",
+                    title: error,
+                    text: "Something went wrong!",
+                });
             } finally {
                 setLoading(false);
             }

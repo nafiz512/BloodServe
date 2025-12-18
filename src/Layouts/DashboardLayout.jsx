@@ -142,7 +142,7 @@ const DashboardLayout = () => {
                         </li>
 
                         {/* dashboard links */}
-                        <li>
+                        {/* <li>
                             <NavLink
                                 className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                                 data-tip="Funding"
@@ -153,14 +153,12 @@ const DashboardLayout = () => {
                                     Funding
                                 </span>
                             </NavLink>
-                        </li>
+                        </li> */}
 
-                        {role === "volunteer" && (
+                        {/* {role === "volunteer" && (
                             <>
-
-
                             </>
-                        )}
+                        )} */}
 
                         {/* doner only links */}
                         {role === "donor" && (

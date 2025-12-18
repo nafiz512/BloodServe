@@ -16,8 +16,10 @@ import UserProfile from "../Pages/Dashboard/UserProfile/UserProfile";
 import CreateDonationRequest from "../Pages/Dashboard/CreateDonationRequest/CreateDonationRequest";
 import DonorManagement from "../Pages/Dashboard/DonorManagement/DonorManagement";
 import AllDonationRequests from "../Pages/Dashboard/AllDonationRequests/AllDonationRequests";
-
 import PrivateRoute from "./PrivateRoute";
+import DonationSuccess from "../Pages/Donation Success/DonationSuccess";
+import DonationCancel from "../Pages/Donation Cancel/DonationCancel";
+import UpdateDonationRequests from "../Pages/Dashboard/UpdateDonationRequests/UpdateDonationRequests";
 
 const Routes = createBrowserRouter([
     {
@@ -39,7 +41,7 @@ const Routes = createBrowserRouter([
                 element: <Register></Register>,
             },
             {
-                path: "/find-doners",
+                path: "/find-donors",
                 element: <FindDoners></FindDoners>,
             },
             {
@@ -48,11 +50,11 @@ const Routes = createBrowserRouter([
             },
             {
                 path: "/requests/:id",
-                element: <DetailsRequests></DetailsRequests>,
+                element: <PrivateRoute> <DetailsRequests></DetailsRequests>  </PrivateRoute>,
             },
             {
                 path: "/fundings",
-                element: <Funding></Funding>,
+                element: <PrivateRoute> <Funding></Funding> </PrivateRoute>,
             },
             {
                 path: "/about",
@@ -62,11 +64,19 @@ const Routes = createBrowserRouter([
                 path: "/contact",
                 element: <Contact></Contact>,
             },
+            {
+                path: "/donation-success",
+                element: <DonationSuccess></DonationSuccess>,
+            },
+            {
+                path: "/donation-cancel",
+                element: <DonationCancel></DonationCancel>,
+            },
         ],
     },
     {
         path: "dashboard",
-        element: <PrivateRoute> <DashboardLayout></DashboardLayout>    </PrivateRoute>,
+        element: <PrivateRoute> <DashboardLayout></DashboardLayout> </PrivateRoute>,
         children: [
             {
                 index: true,
@@ -79,6 +89,10 @@ const Routes = createBrowserRouter([
             {
                 path: "create-donation-request",
                 element: <CreateDonationRequest></CreateDonationRequest>,
+            },
+            {
+                path: "update-donation-request/:id",
+                element: <UpdateDonationRequests></UpdateDonationRequests>,
             },
             {
                 path: "all-users",

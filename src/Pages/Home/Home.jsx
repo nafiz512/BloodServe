@@ -2,6 +2,7 @@ import React from "react";
 import { BsCash } from "react-icons/bs";
 import { HiHeart } from "react-icons/hi";
 import { MdGroups2 } from "react-icons/md";
+import { NavLink } from "react-router";
 
 const Home = () => {
     return (
@@ -18,12 +19,13 @@ const Home = () => {
                             difference.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4 lg:justify-start">
-                            <button className="flex h-12 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary px-6 text-base font-bold text-white shadow-lg shadow-primary/30 hover:bg-opacity-90">
+                            <NavLink to={'/register'}>  <button className="flex h-12 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary px-6 text-base font-bold text-white shadow-lg shadow-primary/30 hover:bg-opacity-90">
                                 <span>Join as a donor</span>
-                            </button>
-                            <button className="flex h-12 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary/20 px-6 text-base font-bold text-primary hover:bg-primary/30">
+                            </button></NavLink>
+                            <NavLink to={'/find-doners'}>  <button className="flex h-12 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary/20 px-6 text-base font-bold text-primary hover:bg-primary/30">
                                 <span>Search Donors</span>
-                            </button>
+                            </button>  </NavLink>
+
                         </div>
                     </div>
                     <div className="flex justify-center">
@@ -142,8 +144,9 @@ const Home = () => {
                                     Name
                                 </label>
                                 <input
-                                    className="mt-1 block w-full rounded-lg border-gray-300 bg-background-light shadow-sm focus:border-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                    className="mt-1 p-3 block w-full rounded-lg border-gray-300 bg-background-light shadow-sm focus:border-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     id="name"
+                                    placeholder="Enter your name"
                                     name="name"
                                     type="text"
                                 />
@@ -153,9 +156,10 @@ const Home = () => {
                                     Email
                                 </label>
                                 <input
-                                    className="mt-1 block w-full rounded-lg border-gray-300 bg-background-light shadow-sm focus:border-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                    className="mt-1 block w-full rounded-lg border-gray-300 bg-background-light shadow-sm focus:border-primary p-3 focus:ring-primary dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     id="email"
                                     name="email"
+                                    placeholder="Enter your email"
                                     type="email"
                                 />
                             </div>
@@ -164,9 +168,10 @@ const Home = () => {
                                     Message
                                 </label>
                                 <textarea
-                                    className="mt-1 block w-full rounded-lg border-gray-300 bg-background-light shadow-sm focus:border-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                    className="mt-1 block w-full rounded-lg border-gray-300 bg-background-light shadow-sm focus:border-primary p-2 focus:ring-primary dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     id="message"
                                     name="message"
+                                    placeholder="write your message"
                                     rows="4"
                                 ></textarea>
                             </div>
