@@ -5,7 +5,7 @@ const Footer = () => {
     return (
         <div>
             <footer className="px-[8%] bg-white/50 dark:bg-background-dark/30 border-t border-black/5 dark:border-white/10 mt-12 pt-6">
-                <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className=" mx-auto grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                         <div className="flex items-center gap-3 text-[#0e1b17] dark:text-white mb-4">
                             <Logo></Logo>
@@ -22,7 +22,7 @@ const Footer = () => {
                         <ul className="space-y-2">
                             <li>
                                 <a
-                                    className="text-[#4d9981] dark:text-white/70 hover:text-primary"
+                                    className="text-[#4d9981] text-sm dark:text-white/70 hover:text-primary"
                                     href="/"
                                 >
                                     Home
@@ -30,15 +30,7 @@ const Footer = () => {
                             </li>
                             <li>
                                 <a
-                                    className="text-[#4d9981] dark:text-white/70 hover:text-primary"
-                                    href="/find-doners"
-                                >
-                                    Find Donors
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    className="text-[#4d9981] dark:text-white/70 hover:text-primary"
+                                    className="text-[#4d9981] text-sm dark:text-white/70 hover:text-primary"
                                     href="/about"
                                 >
                                     About Us
@@ -46,7 +38,7 @@ const Footer = () => {
                             </li>
                             <li>
                                 <a
-                                    className="text-[#4d9981] dark:text-white/70 hover:text-primary"
+                                    className="text-[#4d9981] text-sm dark:text-white/70 hover:text-primary"
                                     href="/contact"
                                 >
                                     Contact
@@ -61,7 +53,7 @@ const Footer = () => {
                         <ul className="space-y-2">
                             <li>
                                 <a
-                                    className="text-[#4d9981] dark:text-white/70 hover:text-primary"
+                                    className="text-[#4d9981] text-sm dark:text-white/70 hover:text-primary"
                                     href="#"
                                 >
                                     FAQ
@@ -69,7 +61,7 @@ const Footer = () => {
                             </li>
                             <li>
                                 <a
-                                    className="text-[#4d9981] dark:text-white/70 hover:text-primary"
+                                    className="text-[#4d9981] text-sm dark:text-white/70 hover:text-primary"
                                     href="#"
                                 >
                                     Privacy Policy
@@ -77,7 +69,7 @@ const Footer = () => {
                             </li>
                             <li>
                                 <a
-                                    className="text-[#4d9981] dark:text-white/70 hover:text-primary"
+                                    className="text-[#4d9981] text-sm dark:text-white/70 hover:text-primary"
                                     href="#"
                                 >
                                     Terms of Service
@@ -86,10 +78,10 @@ const Footer = () => {
                         </ul>
                     </div>
                     <div>
-                        <h4 className="font-bold text-[#0e1b17] dark:text-white mb-4">
+                        <h4 className="font-bold text-[#0e1b17]  dark:text-white mb-4">
                             Contact Us
                         </h4>
-                        <p className="text-[#4d9981] dark:text-white/70 text-sm">
+                        <p className="text-[#4d9981]  dark:text-white/70 text-sm">
                             123 Life Saver St, Dhaka, Bangladesh
                         </p>
                         <p className="text-[#4d9981] dark:text-white/70 text-sm">

@@ -19,7 +19,7 @@ const About = () => {
                     data-alt="Soft-focus, optimistic image showing a diverse group of smiling people, conveying community and hope."
                 ></div>
                 <div className="dark:absolute dark:inset-0 dark:bg-background-dark/80"></div>
-                <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="relative mx-auto  lg:px-8">
                     <div className="mx-auto max-w-3xl text-center">
                         <h1 className="text-4xl font-black leading-tight tracking-[-0.033em] text-[#0e1b17] dark:text-white sm:text-5xl lg:text-6xl">
                             Connecting Lifesavers, One Donation at a Time
@@ -36,7 +36,7 @@ const About = () => {
             </section>
             {/* ... rest of the component ... */}
             <section className="py-16 sm:py-24">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="">
                     <div className="mx-auto max-w-2xl lg:max-w-none">
                         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-24">
                             <div className="overflow-hidden rounded-2xl shadow-lg">
@@ -68,7 +68,7 @@ const About = () => {
             </section>
             {/* */}
             <section className="bg-white/50 dark:bg-background-dark/50 py-16 sm:py-24">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="">
                     <div className="mx-auto max-w-2xl lg:text-center">
                         <h2 className="text-3xl font-bold tracking-tight text-[#0e1b17] dark:text-white sm:text-4xl">
                             How We Make a Difference
@@ -174,7 +174,7 @@ const About = () => {
             </section>
             {/* */}
             <section className="py-16 sm:py-24">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="">
                     <div className="mx-auto max-w-3xl text-center">
                         <h2 className="text-3xl font-bold tracking-tight text-[#0e1b17] dark:text-white sm:text-4xl">
                             Why We Built This Platform
@@ -195,7 +195,7 @@ const About = () => {
             </section>
             {/* */}
             <section className="py-16 sm:py-24">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="">
                     <div className="relative isolate overflow-hidden bg-primary/20 dark:bg-primary/10 rounded-2xl px-6 py-20 text-center shadow-lg sm:px-16">
                         <h2 className="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-[#0e1b17] dark:text-white sm:text-4xl">
                             Our Commitment to You
@@ -213,7 +213,7 @@ const About = () => {
             </section>
             {/* */}
             <section className="py-16 sm:py-24">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="">
                     <div className="mx-auto max-w-3xl text-center">
                         <h2 className="text-3xl font-bold tracking-tight text-[#0e1b17] dark:text-white sm:text-4xl">
                             Be a Part of the Mission

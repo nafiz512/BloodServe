@@ -4,7 +4,7 @@ import { MdMail } from "react-icons/md";
 
 const Contact = () => {
     return (
-        <div className=" container mx-auto px-4 py-16 sm:py-24">
+        <div className=" container mx-auto py-16 sm:py-24">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
                 {/* <!-- Left Column: Heading and Contact Info --> */}
                 <div className="space-y-8">
